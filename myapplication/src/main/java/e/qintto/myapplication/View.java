@@ -28,6 +28,8 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
     private Images image = new Images();
     Paint paint = new Paint();
     int pointx, pointy;
+    Client client = new Client();
+    String inp;
 
 
     public View(Context context){
@@ -118,16 +120,21 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
             else if((pointx > 930) && (pointx < 1140) && (pointy >1830) && (pointy < 2060)){
-                thread.pagetwo = false;
-                thread.pagethree = true;
+                if(thread.id_lenth == 8){
+                    thread.pagetwo = false;
+                    thread.pagethree = true;
+                    client.inputstr = thread.identification;
+                    client.execute();
+                }
+
+
             }
 
 
         }
-        else if(thread.pagethree){
+        else if(thread.pagethree && e.getAction() == MotionEvent.ACTION_DOWN){
             thread.pagethree = false;
-            Client client = new Client();
-            client.execute();
+
         }
 
 
@@ -170,8 +177,11 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
 
         }
         else{
+            inp = client.outputstr;
             paint.setTextSize(70);
-            c.drawText("A message has been sent to server", 100, 720, paint);
+            c.drawText(inp, 100, 720, paint);
+            inp = client.outputstr2;
+            c.drawText(inp, 100, 1020, paint);
 
         }
 
