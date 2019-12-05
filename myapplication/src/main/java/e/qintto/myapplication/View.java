@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -168,20 +169,140 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
             //paint.setTextAlign(Paint.Align.CENTER);
             c.drawText(thread.identification, 350, 720, paint);
 
-            /*
-            image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.seniortest));
-            image.draw(c, 310, 1190);
-            image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.seniortest));
-            image.draw(c, 520, 1420);   */
+        }
+        else if(thread.pagethree){
+            paint.setColor(Color.WHITE);
+            image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.other));
+            image.draw(c, 0, 0);
+            float lastx = 200, lasty = 1800;
 
+            Rect r = new Rect(200, 700, 1300, 1800);
+            c.drawRect(r, paint);
 
+            int counter = 0;
+            inp = client.outputstr;
+            boolean time= true;
+            String timehold = "", temphold = "";
+            while(inp.charAt(counter) != '!'){
+                timehold = "";
+                temphold = "";
+                while(inp.charAt(counter) != ' ' && time){
+                    timehold += inp.charAt(counter);
+                    counter += 1;
+                }
+                if(inp.charAt(counter) == ' '){
+                    time = false;
+                    counter +=1;
+                }
+                while(inp.charAt(counter) != '~'){
+                    temphold += inp.charAt(counter);
+                    counter += 1;
+                }
+                if(inp.charAt(counter) == '~'){
+                    int pointx , pointy;
+                    //pointx = ((int)  Double.parseDouble(timehold))*3 +100;
+                    //pointy = (int)  (Double.parseDouble(temphold) - 24)*100 + 500;
+                    float point1 =(float) Double.parseDouble(timehold)*3 +200;
+                    float point2 =((float) Double.parseDouble(temphold)-24)*100 +500;
+                    point2 = 2000- point2;
+                    paint.setStyle(Paint.Style.FILL);
+                    paint.setColor(Color.BLACK);
+                    c.drawCircle(point1, point2, 8, paint);
+                    paint.setStrokeWidth(5);
+                    c.drawLine(lastx, lasty, point1, point2, paint);
+                    lastx = point1;
+                    lasty = point2;
+                    counter += 1;
+                    time = true;
+                }
+            }
+
+            //paint.setStyle(Paint.Style.STROKE);  // No filler
+            int graphcount = 0;
+            paint.setColor(Color.DKGRAY);
+            while(graphcount != 400) {
+                paint.setTextSize(50);
+                c.drawCircle(200+ graphcount*3, 1800, 9, paint);
+                c.drawText(String.valueOf(graphcount), 180 + graphcount*3, 1900, paint);
+                graphcount += 50;
+            }
+            graphcount = 22;
+            while(graphcount != 32) {
+                paint.setTextSize(50);
+                c.drawCircle(200, 1700-(graphcount- 22)*100, 9, paint);
+                c.drawText(String.valueOf(graphcount), 50, 1700-(graphcount- 22)*100, paint);
+                graphcount += 1;
+            }
+            c.drawText("Temperature in Celcius", 20, 650, paint);
+            c.drawText("Time in Nanoseconds", 500, 2050, paint);
+            c.drawText("Click AnyWhere to Continue", 500, 2150, paint);
         }
         else{
-            inp = client.outputstr;
-            paint.setTextSize(70);
-            c.drawText(inp, 100, 720, paint);
+            paint.setColor(Color.WHITE);
+            image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.othertwo));
+            image.draw(c, 0, 0);
+            float lastx = 300, lasty = 1820;
+
+            Rect r = new Rect(300, 900, 1350, 1820);
+            c.drawRect(r, paint);
+
+            int counter = 0;
             inp = client.outputstr2;
-            c.drawText(inp, 100, 1020, paint);
+            boolean time= true;
+            String timehold = "", temphold = "";
+            while(inp.charAt(counter) != '!'){
+                timehold = "";
+                temphold = "";
+                while(inp.charAt(counter) != ' ' && time){
+                    timehold += inp.charAt(counter);
+                    counter += 1;
+                }
+                if(inp.charAt(counter) == ' '){
+                    time = false;
+                    counter +=1;
+                }
+                while(inp.charAt(counter) != '~'){
+                    temphold += inp.charAt(counter);
+                    counter += 1;
+                }
+                if(inp.charAt(counter) == '~'){
+                    int pointx , pointy;
+                    float point1 =(float) Double.parseDouble(timehold)*2500 +300;
+                    float point2 =((float) Double.parseDouble(temphold)-24)/250 +500;
+                    point2 = 2000- point2;
+                    paint.setStyle(Paint.Style.FILL);
+                    paint.setColor(Color.BLACK);
+                    c.drawCircle(point1, point2, 8, paint);
+                    paint.setStrokeWidth(5);
+                    c.drawLine(lastx, lasty, point1, point2, paint);
+                    lastx = point1;
+                    lasty = point2;
+                    counter += 1;
+                    time = true;
+                }
+            }
+
+            int graphcount = 0;
+            paint.setColor(Color.DKGRAY);
+            while(graphcount != 50) {
+                paint.setTextSize(50);
+                c.drawCircle(300+ graphcount*25, 1820, 9, paint);
+                c.drawText(("0." + String.valueOf(graphcount)), 280 + graphcount*25, 1920, paint);
+                graphcount += 10;
+
+            }
+
+            graphcount = -80000;
+            while(graphcount != 160000) {
+                paint.setTextSize(50);
+                c.drawCircle(300, 1820 - (graphcount + 80000) / 250, 9, paint);
+                c.drawText(String.valueOf(graphcount), 50, 1820 - (graphcount + 80000) / 250, paint);
+                graphcount += 20000;
+
+            }
+
+            c.drawText("ECG Reading", 20, 850, paint);
+            c.drawText("Time in Seconds", 500, 2050, paint);
 
         }
 
