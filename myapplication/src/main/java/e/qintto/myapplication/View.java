@@ -54,6 +54,7 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
         thread.menu = true;
         thread.pagetwo = false;
         thread.pagethree = false;
+        thread.pagethreep1 = false;
     }
 
     @Override
@@ -123,15 +124,20 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
             else if((pointx > 930) && (pointx < 1140) && (pointy >1830) && (pointy < 2060)){
                 if(thread.id_lenth == 8){
                     thread.pagetwo = false;
-                    thread.pagethree = true;
+                    thread.pagethreep1 = true;
                     client.inputstr = thread.identification;
                     client.execute();
+
                 }
 
 
             }
 
 
+        }
+        else if(thread.pagethreep1 && e.getAction() == MotionEvent.ACTION_DOWN){
+            thread.pagethreep1 = false;
+            thread.pagethree = true;
         }
         else if(thread.pagethree && e.getAction() == MotionEvent.ACTION_DOWN){
             thread.pagethree = false;
@@ -170,7 +176,144 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
             c.drawText(thread.identification, 350, 720, paint);
 
         }
+        else if(thread.pagethreep1){
+            image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.heart));
+            image.draw(c, 0, 0);
+            inp = client.outputstr3;
+            paint.setColor(Color.BLACK);
+            paint.setTextSize(85);
+            String rate = "", date = "", infect = "";
+            String bodytemp = "", date2 = "";
+            int counter = 0, breaks = 0;
+            while(inp.charAt(counter) != '~'){
+                if(inp.charAt(counter) == ' ') {
+                    breaks += 1;
+                    counter += 1;
+                }
+                if(breaks == 1){
+                    rate += inp.charAt(counter);
+                    counter += 1;
+                }
+                else if(breaks == 2){
+                    date += inp.charAt(counter);
+                    counter += 1;
+                }
+                else if(breaks == 3){
+                    infect += inp.charAt(counter);
+                    counter += 1;
+                }
+                else {
+                    counter += 1;
+                }
+
+            }
+            counter = 0;
+            breaks = 0;
+            inp = client.outputstr4;
+            while(inp.charAt(counter) != '~'){
+                if(inp.charAt(counter) == ' ') {
+                    breaks += 1;
+                    counter += 1;
+                }
+                if(breaks == 1){
+                    bodytemp += inp.charAt(counter);
+                    counter += 1;
+                }
+                else if(breaks == 2){
+                    date2 += inp.charAt(counter);
+                    counter += 1;
+                }
+                else {
+                    counter += 1;
+                }
+
+            }
+
+            c.drawText("Heart Rate: ", 280, 520, paint);
+            c.drawText(rate, 830, 520, paint);
+            c.drawText("Date of Measurement: ", 280, 670, paint);
+            c.drawText(date, 870, 820, paint);
+            c.drawText("Body Temperature: ", 280, 970, paint);
+            c.drawText(bodytemp, 870, 1120, paint);
+            c.drawText("Date of Measurement: ", 280, 1270, paint);
+            c.drawText(date2, 870, 1420, paint);
+        }
         else if(thread.pagethree){
+            paint.setColor(Color.WHITE);
+            image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.other));
+            image.draw(c, 0, 0);
+            float lastx = 300, lasty = 1820;
+
+            Rect r = new Rect(300, 900, 1350, 1820);
+            c.drawRect(r, paint);
+
+            int counter = 0;
+            inp = client.outputstr;
+
+            //paint.setTextSize(50);
+            //c.drawText(inp, 500, 300, paint);
+
+            boolean time= true;
+            String timehold = "", temphold = "";
+            while(inp.charAt(counter) != '!'){
+                timehold = "";
+                temphold = "";
+                while(inp.charAt(counter) != ' ' && time){
+                    timehold += inp.charAt(counter);
+                    counter += 1;
+                }
+                if(inp.charAt(counter) == ' '){
+                    time = false;
+                    counter +=1;
+                }
+                while(inp.charAt(counter) != '~'){
+                    temphold += inp.charAt(counter);
+                    counter += 1;
+                }
+                if(inp.charAt(counter) == '~'){
+                    int pointx , pointy;
+                    float point1 =(float) Double.parseDouble(timehold)*2500 +300;
+                    float point2 =(((float) Double.parseDouble(temphold)) - 200000) * 8/100;
+                    point2 = 1820- point2;
+                    paint.setStyle(Paint.Style.FILL);
+                    paint.setColor(Color.BLACK);
+                    c.drawCircle(point1, point2, 8, paint);
+                    paint.setStrokeWidth(5);
+                    c.drawLine(lastx, lasty, point1, point2, paint);
+                    lastx = point1;
+                    lasty = point2;
+                    counter += 1;
+                    time = true;
+                }
+            }
+
+            int graphcount = 0;
+            paint.setColor(Color.rgb(54,47,47));
+            while(graphcount != 50) {
+                paint.setTextSize(50);
+                c.drawCircle(300+ graphcount*25, 1820, 9, paint);
+                c.drawText((String.valueOf(graphcount / 10)), 280 + graphcount*25, 1920, paint);
+                graphcount += 10;
+
+            }
+
+            graphcount = -80000;
+            int newcount = 200000;
+            while(graphcount != 160000) {
+                paint.setTextSize(50);
+                c.drawCircle(300, 1820 - (graphcount + 80000) / 250, 9, paint);
+                c.drawText(String.valueOf(newcount), 50, 1820 - (graphcount + 80000) / 250, paint);
+                graphcount += 20000;
+                newcount += 1000;
+
+            }
+
+            c.drawText("PPG Reading in Red Count", 20, 850, paint);
+            c.drawText("Time in Seconds", 500, 2050, paint);
+
+
+        }
+        /*else if(thread.pagethree && thread.pagetwo){
             paint.setColor(Color.WHITE);
             image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.other));
             image.draw(c, 0, 0);
@@ -219,7 +362,7 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
 
             //paint.setStyle(Paint.Style.STROKE);  // No filler
             int graphcount = 0;
-            paint.setColor(Color.DKGRAY);
+            paint.setColor(Color.rgb(54,47,47));
             while(graphcount != 400) {
                 paint.setTextSize(50);
                 c.drawCircle(200+ graphcount*3, 1800, 9, paint);
@@ -236,7 +379,7 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
             c.drawText("Temperature in Celcius", 20, 650, paint);
             c.drawText("Time in Nanoseconds", 500, 2050, paint);
             c.drawText("Click AnyWhere to Continue", 500, 2150, paint);
-        }
+        } */
         else{
             paint.setColor(Color.WHITE);
             image.setPic(BitmapFactory.decodeResource(getResources(), R.drawable.othertwo));
@@ -268,7 +411,7 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
                 if(inp.charAt(counter) == '~'){
                     int pointx , pointy;
                     float point1 =(float) Double.parseDouble(timehold)*2500 +300;
-                    float point2 =((float) Double.parseDouble(temphold)-24)/250 +500;
+                    float point2 =((float) Double.parseDouble(temphold))/250 +500;
                     point2 = 2000- point2;
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(Color.BLACK);
@@ -283,11 +426,11 @@ public class View extends SurfaceView implements SurfaceHolder.Callback {
             }
 
             int graphcount = 0;
-            paint.setColor(Color.DKGRAY);
+            paint.setColor(Color.rgb(21,21,21));
             while(graphcount != 50) {
                 paint.setTextSize(50);
                 c.drawCircle(300+ graphcount*25, 1820, 9, paint);
-                c.drawText(("0." + String.valueOf(graphcount)), 280 + graphcount*25, 1920, paint);
+                c.drawText((String.valueOf(graphcount / 10)), 280 + graphcount*25, 1920, paint);
                 graphcount += 10;
 
             }

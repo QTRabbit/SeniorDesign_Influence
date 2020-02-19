@@ -9,7 +9,7 @@ public class MainThread extends Thread {
     private View view;
     private boolean status = true;
     private static Canvas canvas;
-    boolean menu, pagetwo, pagethree;
+    boolean menu, pagetwo, pagethree, pagethreep1;
     String identification= "";
     int id_lenth= 0;
 
